@@ -1,13 +1,11 @@
 pipeline {
     agent {
-    docker {
-        image 'maven:3.9.0-eclipse-temurin-17'
-        args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+        docker {
+            image 'maven:3.9.0-eclipse-temurin-17' // Maven + Java 17
+            args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
-}
     environment {
-        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'  // Ensure Java 17 is used
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
         SONAR_URL = 'http://13.126.117.52:9000/'
     }
     stages {
@@ -18,8 +16,10 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'java -version'       // Verify Java 17
-                sh 'mvn clean package'
+                sh '''
+                    java -version   # Verify Java 17
+                    mvn clean package
+                '''
             }
         }
         stage('Sonar Analysis') {
